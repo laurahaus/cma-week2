@@ -15,6 +15,7 @@ check_pkg("sf")
 check_pkg("ggplot2")
 check_pkg("ggpubr")
 check_pkg("lubridate")
+check_pkg("zoo")
 ```
 
 #Task 1
@@ -163,7 +164,37 @@ ggplot() +
   geom_line(data=caro_6, aes(x=DatetimeUTC, y=speed, colour = "6 minutes"), linewidth = 0.7) +
   geom_line(data=caro_9, aes(x=DatetimeUTC, y=speed, colour = "9 minutes"), linewidth = 0.7) +
   scale_color_brewer(name = "Trajectory", palette = "Set2") +
-  ggtitle("Comparing derived speed at different sampling intervals")
+  ggtitle("Comparing derived speed at different sampling intervals") +
+  xlab("Time") +
+  ylab("Speed [m/s]")
 
 print("With increasing intervals the maximum speed decreases and the lines are smoothed.")
+```
+
+#Task 5
+```{r, warning = FALSE, message = FALSE, fig.align = "center"}
+#calculate rolling window 3
+roll_3 <- caro %>%
+  group_by(TierID) %>%
+  mutate(roll_speed = rollmean(speed, k=3, fill= NA, align = "left")
+)
+#calculate rolling window 6
+roll_6 <- caro %>%
+  group_by(TierID) %>%
+  mutate(roll_speed = rollmean(speed, k=6, fill= NA, align = "left")
+)
+#calculate rolling window 9
+roll_9 <- caro %>%
+  group_by(TierID) %>%
+  mutate(roll_speed = rollmean(speed, k=9, fill= NA, align = "left")
+)
+#plot results
+ggplot() +
+  geom_line(data=roll_3, aes(x=DatetimeUTC, y=roll_speed, colour = "3"), linewidth = 0.7) +
+  geom_line(data=roll_6, aes(x=DatetimeUTC, y=roll_speed, colour = "6"), linewidth = 0.7) +
+  geom_line(data=roll_9, aes(x=DatetimeUTC, y=roll_speed, colour = "9"), linewidth = 0.7) +
+  scale_color_brewer(name = "Window Size", palette = "Set2") +
+  ggtitle("Comparing derived speed at different sampling intervals") +
+  xlab("Time") +
+  ylab("Speed [m/s]")
 ```
