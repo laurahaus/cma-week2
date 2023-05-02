@@ -16,6 +16,8 @@ check_pkg("ggplot2")
 check_pkg("ggpubr")
 check_pkg("lubridate")
 check_pkg("zoo")
+check_pkg("tmap")
+check_pkg("leaflet")
 ```
 
 #Task 1
@@ -197,4 +199,17 @@ ggplot() +
   ggtitle("Comparing derived speed at different sampling intervals") +
   xlab("Time") +
   ylab("Speed [m/s]")
+```
+
+#Task 7
+```{r, warning = FALSE, message = FALSE, fig.align = "center"}
+#import data
+posmo <- read_delim("data/posmo_2023-04-05T00_00_00+02_00-2023-05-01T23_59_59+02_00.csv", ",")
+#convert into sf object and transform to Swiss CRS
+posmo <- st_as_sf(posmo, coords = c("lon_x", "lat_y"), crs = 4326, remove = FALSE, na.fail = FALSE) %>%
+  st_transform(crs=2056)
+#plot data
+tmap_mode("view")
+tm_shape(posmo) +
+  tm_dots()
 ```
